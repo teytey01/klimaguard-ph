@@ -22,14 +22,14 @@ Environment variables live in `.env.local` (see `.kiro/steering/tech.md`).
 ```
 src/
 ├── app/
-│   ├── layout.tsx          # root layout + metadata, ThemeProvider, mounts <AlertBanner/>
+│   ├── layout.tsx          # root layout + metadata, mounts <AlertBanner/>
 │   ├── page.tsx            # home dashboard (WeatherPanel + ChatWidget)
 │   ├── agriculture/page.tsx # agricultural advisory surface
 │   ├── alerts/page.tsx     # hazard alerts + hotlines (M3/M4)
 │   ├── globals.css         # Tailwind v4 theme + typing-dot keyframes
 │   └── api/
 │       ├── agriculture/route.ts # crop advisory (Region VIII, Open-Meteo)
-│       ├── alerts/route.ts     # hazard alerts (15-min revalidate, mock feed)
+│       ├── alerts/route.ts     # hazard alerts (15-min revalidate)
 │       ├── chat/route.ts       # chat Route Handler (Amazon Quick stand-in)
 │       ├── geocoding/route.ts  # Open-Meteo geocoding proxy (PH-only)
 │       ├── weather/route.ts    # Open-Meteo forecast proxy (PAGASA fallback)
@@ -42,7 +42,7 @@ src/
 │   ├── common/             # ThemeProvider, ThemeToggle, LocationSearch
 │   ├── transparency/       # BudgetTracker (DRRM allocation/spending)
 │   └── weather/            # WeatherCard, ForecastStrip, WeatherPanel
-├── hooks/                  # useLocation, useWeather, useAlerts (offline-first cache)
+├── hooks/                  # useLocation, useWeather, useAlerts
 ├── lib/
 │   ├── agent/              # Gemini client + KB loader + knowledge/*.md (persona, guardrails)
 │   ├── agriculture/        # cropData (common PH crops), advisory (pure derivation)
@@ -65,7 +65,7 @@ src/
 
 - [x] M1 — KlimaChat (core chat interface)
 - [x] M2 — Weather
-- [x] M3 — Hazard Alerts (full-width AlertBanner, safety priority)
+- [x] M3 — Hazard Alerts (full-width AlertBanner, G07 safety priority)
 - [x] M4 — Safety Advisor (EvacuationCard, always-on emergency hotlines)
 - [x] M5 — Agriculture
 - [x] M8 — Location
@@ -74,4 +74,4 @@ src/
 
 ---
 
-_Last updated: 2026-10-04 (merged M3/M4 alerts with theme + weather/chat surfaces)_
+_Last updated: 2026-10-04 (merge M3/M4 hazard alerts into main)_
