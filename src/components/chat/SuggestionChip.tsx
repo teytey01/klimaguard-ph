@@ -13,7 +13,7 @@ export default function SuggestionChip({
     <button
       type="button"
       onClick={() => onSelect(suggestion)}
-      className="rounded-full border border-teal bg-transparent px-4 py-1.5 text-sm font-medium text-teal transition-colors hover:bg-teal hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
+      className="min-h-[44px] max-w-full rounded-full border border-teal bg-transparent px-4 py-1.5 text-left text-sm font-medium text-teal transition-colors hover:bg-teal hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-teal focus-visible:ring-offset-2 focus-visible:ring-offset-navy"
     >
       {suggestion.label}
     </button>

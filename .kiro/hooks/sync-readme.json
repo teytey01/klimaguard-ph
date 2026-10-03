@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Sync README on Structure Change",
+      "trigger": "PostFileSave",
+      "action": {
+        "type": "agent",
+        "prompt": "A component, page, or lib file was created, renamed, or deleted. Update the README to match the current project state:\n\n1. Read the current project directory structure under src/.\n2. Update the README.md \"Project Structure\" section to reflect the current state.\n3. Update the \"Modules Implemented\" checklist to mark completed modules.\n4. Preserve the existing project description and setup instructions.\n5. Add or update a \"Last updated\" timestamp at the bottom.\n\nrecord all what happend and progress for the documentation\n\nIf README.md has no \"Project Structure\" or \"Modules Implemented\" section yet, add them."
+      },
+      "description": "Auto-updates README.md when project structure changes (files added/removed/renamed in app, components, or lib).",
+      "matcher": "src[\\\\/](app|components|lib)[\\\\/].*\\.(tsx?|ts)$",
+      "enabled": true
+    }
+  ]
+}

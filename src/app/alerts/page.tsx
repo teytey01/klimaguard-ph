@@ -1,8 +1,14 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import type { IHotline } from "@/types";
-import { useAlerts } from "@/hooks";
+import { useAlerts, useLocation, useWeather } from "@/hooks";
 import { EvacuationCard } from "@/components/alerts";
+import CropDamageRiskCard from "@/components/agriculture/CropDamageRiskCard";
+import FarmSafetyTab from "@/components/agriculture/FarmSafetyTab";
+import { assessCropDamageRisk } from "@/lib/agriculture/farmHazard";
+import { SmsBroadcastLog, useAuth } from "@/components/common";
+import { broadcastHazardAlert } from "@/lib/sms";
 
 const FIL_DAYS = [
   "Linggo",
@@ -94,9 +100,31 @@ function AlertsSkeleton() {
 
 export default function AlertsPage() {
   const { state, loading, error, refetch } = useAlerts();
+  // The masked number from the server session (never the raw number).
+  const { session } = useAuth();
+  const recipient = session?.mobile ?? "";
+  const isFarmer = session?.role === "farmer";
+  const { location } = useLocation();
+  const { data: weather } = useWeather(location);
 
   const alert = state?.alert ?? null;
   const hasHazard = Boolean(state?.hasActiveHazard && alert);
+
+  // Simulate an SMS broadcast once per distinct active hazard. The verified
+  // resident's number (from the session) is the recipient; a real deployment
+  // would target every registered resident in the affected barangays.
+  const broadcastedFor = useRef<string | null>(null);
+  useEffect(() => {
+    if (!hasHazard || !alert) {
+      return;
+    }
+    const key = `${alert.typhoonName}-${alert.signalLevel}`;
+    if (broadcastedFor.current === key) {
+      return;
+    }
+    broadcastedFor.current = key;
+    broadcastHazardAlert(alert, recipient ? [recipient] : []);
+  }, [hasHazard, alert, recipient]);
 
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
@@ -174,6 +202,30 @@ export default function AlertsPage() {
             </p>
           </section>
         )}
+      </div>
+
+      {/* Farmer-only: M3 crop damage risk + livestock advisory, M4 farm safety. */}
+      {isFarmer ? (
+        <div className="mt-6 space-y-6">
+          <CropDamageRiskCard
+            risk={assessCropDamageRisk({
+              alert: hasHazard ? alert : null,
+              current: weather?.current,
+              forecast: weather?.forecast,
+            })}
+          />
+          <section>
+            <h2 className="mb-3 text-lg font-bold text-[#1A365D] dark:text-[#F7FAFC]">
+              Kaligtasan ng Bukid at Hayop
+            </h2>
+            <FarmSafetyTab />
+          </section>
+        </div>
+      ) : null}
+
+      {/* Simulated SMS broadcast log — shows what residents would receive. */}
+      <div className="mt-6">
+        <SmsBroadcastLog />
       </div>
     </main>
   );

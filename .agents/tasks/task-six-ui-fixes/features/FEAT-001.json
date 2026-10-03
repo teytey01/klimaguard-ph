@@ -1,0 +1,23 @@
+{
+  "id": "FEAT-001",
+  "type": "feat",
+  "description": "Global CSS-only visual polish in src/app/globals.css plus a root template: (issue 1) seamless theme-aware custom scrollbars, and (issue 5) seamless page transitions via a root template.tsx with a reduced-motion-safe fade. Both are pure globals.css + one new file, independent of the other FEATs.",
+  "status": "completed",
+  "steps": [
+    "In src/app/globals.css, define scrollbar thumb color CSS vars: under :root add --sb-thumb and --sb-thumb-hover (teal-tinted, subtle on light — e.g. color-mix(in srgb, var(--teal) 55%, transparent) and a stronger hover), and under .dark override them for dark surfaces.",
+    "In src/app/globals.css, add global scrollbar rules: `html { scrollbar-width: thin; scrollbar-color: var(--sb-thumb) transparent; }` for Firefox, and WebKit selectors `::-webkit-scrollbar { width:8px; height:8px; }`, `::-webkit-scrollbar-track { background: transparent; }`, `::-webkit-scrollbar-thumb { background: var(--sb-thumb); border-radius: 9999px; }`, `::-webkit-scrollbar-thumb:hover { background: var(--sb-thumb-hover); }`, `::-webkit-scrollbar-button { display: none; }`. height:8px covers the horizontal municipal ModuleNavBar tab bar. Do NOT alter .bg-alert / Alert Red.",
+    "Create src/app/template.tsx: a default-exported Server Component `Template({ children }: { children: React.ReactNode })` returning `<div className=\"kg-page-transition\">{children}</div>`. Do NOT add 'use client'. This follows node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/template.md (template remounts with a unique key per navigation, firing the CSS enter animation).",
+    "In src/app/globals.css, add `.kg-page-transition { animation: kg-fade-in 220ms ease-out both; }`, a `@keyframes kg-fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }`, and `@media (prefers-reduced-motion: reduce) { .kg-page-transition { animation: none; } }`."
+  ],
+  "acceptance_criteria": [
+    "`npm run lint ; npm run build` both exit 0 with no new errors.",
+    "A thin (8px) rounded teal-tinted scrollbar with transparent track and no arrow buttons applies to vertical scrollers and the horizontal municipal module tab bar, in both light and dark.",
+    "src/app/template.tsx exists, has no 'use client', and wraps children in .kg-page-transition.",
+    "Navigating between routes fades content in over ~220ms; with prefers-reduced-motion: reduce the animation is disabled."
+  ],
+  "verification": [
+    "Run `npm run lint ; npm run build` (PowerShell) and confirm both exit 0."
+  ],
+  "blocked_reason": null,
+  "findings": "Done. src/app/globals.css: added --sb-thumb/--sb-thumb-hover under :root (teal 55%/80%) and overridden under .dark (teal 65%/90%); added html { scrollbar-width: thin; scrollbar-color: var(--sb-thumb) transparent } plus WebKit ::-webkit-scrollbar (8px w/h), transparent track, rounded var(--sb-thumb) thumb + :hover var(--sb-thumb-hover), and ::-webkit-scrollbar-button { display: none }. Added .kg-page-transition { animation: kg-fade-in 220ms ease-out both }, @keyframes kg-fade-in (opacity 0->1, translateY 4px->0), and @media (prefers-reduced-motion: reduce) disabling it. Alert Red / .bg-alert untouched. Created src/app/template.tsx: default-exported Server Component Template({children}) returning <div className=\"kg-page-transition\">{children}</div>, no 'use client' (matches Next.js 16 template.md convention; template remounts per navigation). Verification: `npm run lint ; npm run build` both exit 0, no new errors (build is Turbopack, 25 routes generated). Note: template.tsx uses an inline { children: React.ReactNode } type rather than a separate exported I-prefixed props interface, consistent with the Next.js docs' template convention for this one-off framework file. No commits made. README.md Project Structure + changelog updated by the sync-readme hook requirement."
+}

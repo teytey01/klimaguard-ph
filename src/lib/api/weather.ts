@@ -40,6 +40,43 @@ function numberAt(arr: number[] | undefined, index: number): number {
   return typeof value === "number" ? value : 0;
 }
 
+// Last-known-good weather, keyed by "lat,lon". When Open-Meteo is unreachable
+// (most commonly its free-tier daily quota → HTTP 429), the baseline weather
+// AND agriculture surfaces would otherwise hard-fail. Keeping the most recent
+// successful reading lets the app degrade to stale-but-usable data instead of
+// a blank error — the same survival pattern useAlerts already uses client-side.
+const LAST_GOOD_WEATHER_TTL_MS = 24 * 60 * 60 * 1000; // keep a day's reading.
+const STALE_WEATHER_NOTICE =
+  "Hindi makakonekta sa serbisyo ng panahon ngayon. Ipinapakita ang huling nakuhang datos (maaaring luma na).";
+
+interface ILastGoodWeather {
+  data: IWeatherData;
+  savedAt: number;
+}
+
+const lastGoodWeather = new Map<string, ILastGoodWeather>();
+
+function weatherCacheKey(loc: ILocation): string {
+  return `${loc.lat},${loc.lon}`;
+}
+
+function rememberWeather(loc: ILocation, data: IWeatherData): void {
+  lastGoodWeather.set(weatherCacheKey(loc), { data, savedAt: Date.now() });
+}
+
+/** Return the last successful reading for `loc` (marked stale), or null. */
+function recallWeather(loc: ILocation): IWeatherData | null {
+  const hit = lastGoodWeather.get(weatherCacheKey(loc));
+  if (!hit) {
+    return null;
+  }
+  if (Date.now() - hit.savedAt > LAST_GOOD_WEATHER_TTL_MS) {
+    lastGoodWeather.delete(weatherCacheKey(loc));
+    return null;
+  }
+  return { ...hit.data, location: loc, stale: true, notice: STALE_WEATHER_NOTICE };
+}
+
 function buildForecast(daily: IOpenMeteoDaily | undefined): IForecastDay[] {
   const times = daily?.time ?? [];
   return times.map((date, i) => ({
@@ -76,7 +113,8 @@ export async function fetchOpenMeteoWeather(
     "daily",
     "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max",
   );
-  url.searchParams.set("forecast_days", "7");
+  // 10 days so it lines up with PAGASA's TenDay climate forecast.
+  url.searchParams.set("forecast_days", "10");
 
   // The fetch/parse is wrapped so this function is self-contained regardless of
   // caller: on any failure it logs server-side and re-throws a single Filipino-
@@ -91,7 +129,7 @@ export async function fetchOpenMeteoWeather(
     const data = (await res.json()) as IOpenMeteoResponse;
     const current = data.current ?? {};
 
-    return {
+    const result: IWeatherData = {
       location: loc,
       current: {
         temperatureC: Math.round(current.temperature_2m ?? 0),
@@ -107,8 +145,20 @@ export async function fetchOpenMeteoWeather(
       source: "Open-Meteo",
       fetchedAt: new Date().toISOString(),
     };
+    // Remember the last good reading so a later quota/outage can fall back to it.
+    rememberWeather(loc, result);
+    return result;
   } catch (err) {
     console.error("[Open-Meteo] weather fetch error:", err);
+    // Resilience: Open-Meteo's free tier returns HTTP 429 once the daily quota
+    // is spent (and Next would otherwise cache that failure). Rather than kill
+    // the baseline weather + agriculture surfaces, serve the last-known-good
+    // reading for this location, clearly marked stale. Only throw when we have
+    // never had a successful reading to fall back to.
+    const stale = recallWeather(loc);
+    if (stale) {
+      return stale;
+    }
     throw new Error("Hindi makuha ang panahon mula sa Open-Meteo.");
   }
 }

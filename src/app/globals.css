@@ -15,6 +15,25 @@
   --navy: #1a365d;
   --teal: #38b2ac;
   --alert: #e53e3e;
+
+  /* Scrollbar thumb — subtle teal tint on light surfaces. */
+  --sb-thumb: color-mix(in srgb, var(--teal) 55%, transparent);
+  --sb-thumb-hover: color-mix(in srgb, var(--teal) 80%, transparent);
+
+  /* Command Center palette (onboarding / signin / dashboard shells).
+     The surface/tile/heading/muted tones are THEME-AWARE: light values here,
+     dark values under `.dark`, so onboarding & sign-in read correctly in light
+     mode. The amber/brown accents stay constant across themes (they contrast
+     well on both), mirroring how --alert/emergency overrides theme aesthetics.
+     The dashboard opts back into the dark console look via `.cmd-dark`. */
+  --cmd-surface: #ffffff; /* command card background (light) */
+  --cmd-tile: #f1f5fb; /* secondary tiles / inactive module tabs (light) */
+  --cmd-accent: #f8bc4b; /* amber — active module / primary action */
+  --cmd-accent-text: #422c00; /* text on amber */
+  --cmd-planning: #744210; /* brown — M6/M7/M10 planning modules */
+  --cmd-planning-text: #fefcbf; /* pale text on brown */
+  --cmd-heading: #1a2a4a; /* command headings (light) */
+  --cmd-muted: #5a6b86; /* command muted text (light) */
 }
 
 .dark {
@@ -23,6 +42,25 @@
   --card: #16263d;
   --text: #f7fafc;
   --text-muted: #a0aec0;
+
+  /* Scrollbar thumb — brighter teal to stay visible on dark surfaces. */
+  --sb-thumb: color-mix(in srgb, var(--teal) 65%, transparent);
+  --sb-thumb-hover: color-mix(in srgb, var(--teal) 90%, transparent);
+
+  /* Command Center dark tones (original Figma command-center palette). */
+  --cmd-surface: #162030;
+  --cmd-tile: #2d3748;
+  --cmd-heading: #d9e3f9;
+  --cmd-muted: #bcc9c7;
+}
+
+/* Dashboard opts into the always-dark command-console look regardless of the
+   app theme — an operations console reads the same in light or dark. */
+.cmd-dark {
+  --cmd-surface: #162030;
+  --cmd-tile: #2d3748;
+  --cmd-heading: #d9e3f9;
+  --cmd-muted: #bcc9c7;
 }
 
 @theme inline {
@@ -35,8 +73,20 @@
   --color-teal: var(--teal);
   --color-alert: var(--alert);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-cmd-surface: var(--cmd-surface);
+  --color-cmd-tile: var(--cmd-tile);
+  --color-cmd-accent: var(--cmd-accent);
+  --color-cmd-accent-text: var(--cmd-accent-text);
+  --color-cmd-planning: var(--cmd-planning);
+  --color-cmd-planning-text: var(--cmd-planning-text);
+  --color-cmd-heading: var(--cmd-heading);
+  --color-cmd-muted: var(--cmd-muted);
+
+  /* Typography: Lexend body (font-sans), Montserrat headings (font-heading),
+     Poppins UI accents (font-ui). Variables are set by next/font in layout. */
+  --font-sans: var(--font-lexend), system-ui, sans-serif;
+  --font-heading: var(--font-montserrat), system-ui, sans-serif;
+  --font-ui: var(--font-poppins), system-ui, sans-serif;
   --animate-typing-dot: typing-dot 1.2s ease-in-out infinite;
 }
 
@@ -56,5 +106,86 @@
 body {
   background: var(--app-bg);
   color: var(--text);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+}
+
+/* Headings default to Montserrat; UI controls default to Poppins. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+}
+
+button,
+input,
+select,
+textarea,
+nav,
+label {
+  font-family: var(--font-ui);
+}
+
+/* Free-text entry stays in the readable body font. */
+input[type="text"],
+input[type="search"],
+textarea {
+  font-family: var(--font-sans);
+}
+
+/* Seamless, theme-aware custom scrollbars (issue 1). Thin, rounded, teal-tinted
+   thumb with a transparent track and no arrow buttons. The 8px height also
+   covers the horizontal municipal ModuleNavBar tab bar. Alert Red / .bg-alert
+   emergency styling is intentionally untouched. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sb-thumb) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--sb-thumb-hover);
+}
+
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+/* Seamless page transitions (issue 5). src/app/template.tsx remounts with a
+   fresh key per navigation, re-firing this enter animation. Reduced-motion
+   users get no animation. */
+.kg-page-transition {
+  animation: kg-fade-in 220ms ease-out both;
+}
+
+@keyframes kg-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kg-page-transition {
+    animation: none;
+  }
 }

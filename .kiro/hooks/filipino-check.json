@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Filipino Language Check",
+      "trigger": "PostFileSave",
+      "description": "Validates that user-facing strings default to Filipino (KlimaGuard is Filipino-first).",
+      "matcher": "src[\\\\/](app|components)[\\\\/].*\\.tsx$",
+      "action": {
+        "type": "agent",
+        "prompt": "A component or page file was just saved. Validate that user-facing text defaults to Filipino:\n\n1. Scan the saved file for hardcoded user-facing strings (JSX text, placeholders, aria-labels, button labels, titles).\n2. Flag any strings in English only that have no Filipino equivalent.\n3. Suggest Filipino translations for each flagged string.\n4. IGNORE: CSS classes, variable names, API URLs, console messages.\n5. IGNORE: proper nouns (PAGASA, NDRRMC, Open-Meteo, KlimaGuard).\n\nEnd your report with exactly one of:\n- \"✅ All strings Filipino-ready\"\n- \"⚠️ N strings need translation\" (replace N with the count), followed by the flagged strings and suggested translations."
+      }
+    }
+  ]
+}

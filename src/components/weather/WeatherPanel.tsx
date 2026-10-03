@@ -1,6 +1,6 @@
 "use client";
 
-import { LocationSearch } from "@/components/common";
+import { LocationSearch, useLanguage } from "@/components/common";
 import ForecastStrip from "@/components/weather/ForecastStrip";
 import WeatherCard from "@/components/weather/WeatherCard";
 import { useLocation, useWeather } from "@/hooks";
@@ -10,6 +10,7 @@ export interface IWeatherPanelProps {
 }
 
 export default function WeatherPanel({ className }: IWeatherPanelProps) {
+  const { t } = useLanguage();
   const { location, setLocation, useMyLocation, geoError, isLocating } =
     useLocation();
   const { data, isLoading, error, refetch } = useWeather(location);
@@ -49,11 +50,11 @@ export default function WeatherPanel({ className }: IWeatherPanelProps) {
       ) : data ? (
         <>
           <WeatherCard data={data} />
-          <ForecastStrip days={data.forecast} />
+          <ForecastStrip days={data.forecast} pagasaTenDay={data.pagasaTenDay} />
         </>
       ) : (
         <p className="rounded-2xl bg-card p-6 text-center text-sm text-text-muted">
-          Maghanap ng lokasyon para makita ang panahon.
+          {t("weather.searchPrompt")}
         </p>
       )}
     </div>

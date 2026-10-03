@@ -1,0 +1,7 @@
+{
+  "task_id": "task-six-ui-fixes",
+  "task_description": "Six UI/UX fixes for KlimaGuard PH (Next.js 16 App Router): global custom scrollbars, emergency-banner overlap, missing English translations (hardcoded Filipino bypassing i18n), municipal Overview cognitive-load redesign via progressive disclosure, seamless page transitions via root template.tsx, and a role-gated official dashboard nav entry.",
+  "status": "completed",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003", "FEAT-004"],
+  "blocked_reason": null
+}

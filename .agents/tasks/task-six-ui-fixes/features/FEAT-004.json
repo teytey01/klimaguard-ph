@@ -1,0 +1,25 @@
+{
+  "id": "FEAT-004",
+  "type": "feat",
+  "description": "Issues 4 and 6 — municipal dashboard navigation and information architecture. (6) Add a role-gated 'Dashboard' link in AppHeader visible only to officials (lgu/barangay). (4) Redesign the municipal Overview to reduce cognitive load via progressive disclosure using a new native-<details> collapsible section wrapper, preserving ALL existing panels/data. Grouped because both center on the municipal official's navigation experience and both add i18n keys; independent of FEAT-001/002/003.",
+  "status": "completed",
+  "steps": [
+    "Issue 6: add key nav.dashboard to BOTH src/lib/i18n/fil.ts and src/lib/i18n/en.ts (parity required).",
+    "Issue 6: in src/components/common/AppHeader.tsx, call useAuth() and render a <Link href='/dashboard'> with Icon name='command' and t('nav.dashboard') ONLY when ready && (session?.role === 'lgu' || session?.role === 'barangay'). Replicate the two-role check inline (do NOT import server-only src/lib/auth/scope.ts). Style font-ui, teal accent, 44px tap target, focus-visible ring; place it in the right cluster before <LanguageToggle/>.",
+    "Issue 4: create src/components/dashboard/MunCollapsibleSection.tsx — a functional component with exported interface IMunCollapsibleSectionProps { title: string; icon?: IconName; defaultOpen?: boolean; accent?: boolean; children: React.ReactNode } rendering a styled native <details> (SSR-safe, accessible, zero-JS) with a <summary> header (font-ui, teal Icon, chevron rotation on open) using cmd-* tokens and dark: variants, 44px summary tap target. Import IconName from @/components/common/Icon.",
+    "Issue 4: if no existing mun.sec.* key fits a group title, add mun.sec.overviewGlance and mun.sec.directivesGroup to BOTH src/lib/i18n/munFil.ts and src/lib/i18n/munEn.ts (parity required). Reuse existing mun.sec.tiles, mun.sec.stats, mun.sec.river where they fit.",
+    "Issue 4: restructure src/components/dashboard/MunOverviewPanel.tsx preserving every child component and all data: (1) MunEmergencyPanel stays FIRST and uncollapsed when state.emergencyActive (safety overrides); (2) MunicipalDashboardCards stays directly visible as the at-a-glance KPI summary; (3) wrap MunicipalSiteTile grid in a MunCollapsibleSection titled mun.sec.tiles defaultOpen={false}; (4) wrap MunicipalStatGrid in a section titled mun.sec.stats; (5) wrap MunicipalRiverMonitor in a section titled mun.sec.river; (6) wrap MunicipalDirectivePanel + AgencySyncPanel in a section titled mun.sec.directivesGroup (or overviewGlance). Keep single-column at 375px. Delete nothing.",
+    "Issue 4: if src/components/dashboard/index.ts exports sibling components, add MunCollapsibleSection and its props type to the barrel following the existing pattern."
+  ],
+  "acceptance_criteria": [
+    "`npm run lint ; npm run build` both exit 0 with no new errors.",
+    "Signed in as mdrrmo.calamba (lgu) or brgy.sanroque (barangay) the header shows a Dashboard link routing to /dashboard; signed in as a resident/farmer the link is absent.",
+    "The municipal Overview shows the emergency block (if active) and KPI cards first, with field telemetry, command metrics, river monitor and directives collapsed and expandable; no panel or data is removed.",
+    "At 375px the Overview is single-column and each collapsible section is operable by keyboard and pointer."
+  ],
+  "verification": [
+    "Run `npm run lint ; npm run build` (PowerShell) and confirm both exit 0."
+  ],
+  "blocked_reason": null,
+  "findings": "Issue 6: added nav.dashboard to fil.ts/en.ts (parity). AppHeader now calls useAuth()+useLanguage() and renders a role-gated <Link href='/dashboard'> (Icon name='command', font-ui, teal, min-h-11 tap target, focus-visible ring) in the right cluster before LanguageToggle, shown only when ready && role is 'lgu'|'barangay' (inline check; scope.ts NOT imported). Issue 4: created MunCollapsibleSection.tsx (native <details>/<summary>, SSR-safe, zero-JS, group-open chevron rotation, cmd-* tokens + dark variants, 44px summary tap target, IconName from @/components/common/Icon) and exported it from the dashboard barrel. MunOverviewPanel restructured for progressive disclosure: MunEmergencyPanel stays first/uncollapsed when state.emergencyActive, MunicipalDashboardCards stays directly visible, then collapsible sections for tiles (mun.sec.tiles), stats (mun.sec.stats), river (mun.sec.river), and MunicipalDirectivePanel+AgencySyncPanel (mun.sec.directivesGroup). Added mun.sec.overviewGlance + mun.sec.directivesGroup to munFil.ts/munEn.ts at parity; reused existing tiles/stats/river keys. No panel or data removed; single-column preserved at 375px. Verified: `npm run lint ; npm run build` both exit 0, no new errors."
+}

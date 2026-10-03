@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "API Fallback Validation",
+      "trigger": "PostFileSave",
+      "description": "Ensures all API calls have proper error handling and fallbacks so the app degrades gracefully.",
+      "matcher": "src[\\\\/]lib[\\\\/]api[\\\\/].*\\.ts$",
+      "action": {
+        "type": "agent",
+        "prompt": "An API wrapper file in src/lib/api/ was just saved. Verify its resilience:\n\n1. Verify every fetch call is wrapped in try/catch.\n2. Verify there is a fallback return value (never an unhandled undefined/null).\n3. Verify PAGASA calls have an Open-Meteo fallback path.\n4. Verify all API responses include a lastUpdated timestamp.\n5. Verify caching logic exists (minimum 15-minute cache).\n\nFor any check that fails, add a TODO comment at the exact violation point in the file describing what's missing. Then report a short summary of which checks passed and which failed."
+      }
+    }
+  ]
+}

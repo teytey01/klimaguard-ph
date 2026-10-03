@@ -1,2 +1,0 @@
-// chat route placeholder
-export {};

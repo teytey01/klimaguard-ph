@@ -1,7 +1,7 @@
 // Filipino date formatting. date-fns ships no `fil`/Tagalog locale, so the day
 // and month names are hand-rolled here; date-fns is used only for safe parsing
 // and index extraction.
-import { getDate, getDay, getMonth, isValid, parseISO } from "date-fns";
+import { getDate, getDay, getMonth, getYear, isValid, parseISO } from "date-fns";
 
 /** Filipino day names, Sunday-first to match date-fns `getDay` (0 = Sunday). */
 export const ARAW = [
@@ -71,6 +71,18 @@ export function formatFilipinoDate(iso: string): string {
   const day = ARAW[getDay(date)];
   const month = BUWAN[getMonth(date)];
   return `${day}, ${month} ${getDate(date)}`;
+}
+
+/**
+ * Formats an ISO date with the year, e.g. "Oktubre 3, 2026". Returns a safe
+ * fallback for invalid input.
+ */
+export function formatFilipinoLongDate(iso: string): string {
+  const date = parseISO(iso);
+  if (!isValid(date)) {
+    return INVALID_DATE;
+  }
+  return `${BUWAN[getMonth(date)]} ${getDate(date)}, ${getYear(date)}`;
 }
 
 /**

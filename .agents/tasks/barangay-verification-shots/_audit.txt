@@ -1,0 +1,44 @@
+Talaan ng Audit (SINO / KAILAN / ANO)
+9
+
+Naitatala ang bawat edit ng opisyal. Naka-save sa device na ito (demo).
+
+Na-resolve ang insidente: Baradong kanal (QA test)
+
+Kap. Ana Dela Cruz (Barangay Official) · Oct 4, 06:25:50 AM PST
+
+Tumugon sa insidente: Baradong kanal (QA test)
+
+Kap. Ana Dela Cruz (Barangay Official) · Oct 4, 06:25:49 AM PST
+
+Nag-log ng insidente: Baradong kanal (QA test)
+
+Kap. Ana Dela Cruz (Barangay Official) · Oct 4, 06:25:49 AM PST
+
+Namahagi ng 20 pack sa 20 pamilya sa Purok 3
+
+Kap. Ana Dela Cruz (Barangay Official) · Oct 4, 06:25:48 AM PST
+
+In-update ang stock ng Family food packs sa 420
+
+Kap. Ana Dela Cruz (Barangay Official) · Oct 4, 06:25:47 AM PST
+
+In-update ang okupasyon ng San Roque Central Gym sa 300/400
+
+Kap. Ana Dela Cruz (Barangay Official) · Oct 4, 06:25:46 AM PST
+
+In-update ang okupasyon ng San Roque Central Gym sa 360/400
+
+Kap. Ana Dela Cruz (Barangay Official) · Oct 4, 06:25:45 AM PST
+
+Nag-dispatch ng Team Bravo sa Purok 5: Suriin ang kanal sa Purok 5 (QA)
+
+Kap. Ana Dela Cruz (Barangay Official) · Oct 4, 06:25:43 AM PST
+
+Awtomatikong na-activate ang pre-disaster checklist (Signal 3)
+
+Kap. Ana Dela Cruz (Barangay Official) · Oct 4, 06:25:15 AM PST
+
+I-reset ang demo data
+
+Pinagmulan: NDRRMC / Barangay San Roque BDRRMC (demo data)

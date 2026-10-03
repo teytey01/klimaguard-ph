@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import type { IAlertState } from "@/types";
 import { useAlerts } from "@/hooks";
+import { useLanguage } from "@/components/common";
 
 export interface IAlertBannerProps {
   state?: IAlertState | null;
@@ -51,7 +53,9 @@ function readDismissedSignal(): number {
     return 0;
   }
   try {
-    const raw = window.localStorage.getItem(DISMISS_KEY);
+    // sessionStorage: dismissal is temporary (this tab/session only) so the
+    // banner returns on the next visit — emergencies can't be hidden forever.
+    const raw = window.sessionStorage.getItem(DISMISS_KEY);
     if (!raw) {
       return 0;
     }
@@ -67,15 +71,21 @@ function writeDismissedSignal(signalLevel: number): void {
     return;
   }
   try {
-    window.localStorage.setItem(DISMISS_KEY, String(signalLevel));
+    window.sessionStorage.setItem(DISMISS_KEY, String(signalLevel));
   } catch {
     // Best-effort; ignore storage failures (quota, privacy mode).
   }
 }
 
 export function AlertBanner({ state }: IAlertBannerProps) {
+  const pathname = usePathname();
+  const { t } = useLanguage();
   const internal = useAlerts();
   const resolved = state !== undefined ? state : internal.state;
+
+  // The dashboard shells own their own emergency UI (MunicipalOverrideBar),
+  // so suppress the global banner there to avoid two stacked red strips.
+  const onDashboard = pathname?.startsWith("/dashboard") ?? false;
 
   const [dismissedSignal, setDismissedSignal] = useState<number>(
     readDismissedSignal
@@ -84,7 +94,7 @@ export function AlertBanner({ state }: IAlertBannerProps) {
   const alert = resolved?.alert ?? null;
   const hasHazard = Boolean(resolved?.hasActiveHazard && alert);
 
-  if (!hasHazard || !alert) {
+  if (onDashboard || !hasHazard || !alert) {
     return null;
   }
 
@@ -114,32 +124,34 @@ export function AlertBanner({ state }: IAlertBannerProps) {
           >
             ⚠️
           </span>
-          <div className="min-w-0">
+          <div className="min-w-0 break-words">
             <p className="text-sm font-bold uppercase tracking-wide">
               Signal No. {alert.signalLevel} — {alert.typhoonName}
             </p>
             <p className="text-sm text-white/90">
-              Apektadong lugar: {alert.affectedAreas.join(", ")}
+              {t("alert.affectedAreas", {
+                areas: alert.affectedAreas.join(", "),
+              })}
             </p>
             <p className="text-xs text-white/80">
               {formatFilipinoDate(alert.timestamp)}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <a
             href="tel:911"
             className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-bold text-[#E53E3E]"
           >
-            Tawagan ang 911
+            {t("alert.call911")}
           </a>
           <button
             type="button"
             onClick={handleDismiss}
-            aria-label="Isara ang alerto"
+            aria-label={t("alert.dismissLabel")}
             className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-md border border-white/60 px-3 py-2 text-sm font-semibold text-white"
           >
-            Isara
+            {t("alert.dismiss")}
           </button>
         </div>
       </div>

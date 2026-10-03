@@ -1,0 +1,200 @@
+{
+  "results": [
+    {
+      "name": "PROBE en-US browser, no stored choice -> language",
+      "pass": true,
+      "detail": "html lang=en"
+    },
+    {
+      "name": "Default theme is light",
+      "pass": true,
+      "detail": "html.dark=false"
+    },
+    {
+      "name": "Default language is Filipino",
+      "pass": true,
+      "detail": "html lang=fil"
+    },
+    {
+      "name": "Barangay sidebar shows only Barangay Official",
+      "pass": true,
+      "detail": "Barangay Official"
+    },
+    {
+      "name": "Header scoped to own barangay",
+      "pass": true,
+      "detail": "Barangay San Roque, Santa Cruz"
+    },
+    {
+      "name": "Tab renders panel: Operations Grid",
+      "pass": true,
+      "detail": "1 headings, 2195 chars"
+    },
+    {
+      "name": "Tab renders panel: Evacuation Centers",
+      "pass": true,
+      "detail": "3 headings, 470 chars"
+    },
+    {
+      "name": "Tab renders panel: Tanod Patrols",
+      "pass": true,
+      "detail": "2 headings, 816 chars"
+    },
+    {
+      "name": "Tab renders panel: River Sensors",
+      "pass": true,
+      "detail": "2 headings, 515 chars"
+    },
+    {
+      "name": "Tab renders panel: Relief Goods",
+      "pass": true,
+      "detail": "2 headings, 716 chars"
+    },
+    {
+      "name": "Tab renders panel: Ulat ng Mamamayan",
+      "pass": true,
+      "detail": "3 headings, 1074 chars"
+    },
+    {
+      "name": "Module renders panel: KlimaChat (M1)",
+      "pass": true,
+      "detail": "269 chars"
+    },
+    {
+      "name": "Module renders panel: Detalye ng Panahon (M2)",
+      "pass": false,
+      "detail": "248 chars, ERROR STATE"
+    },
+    {
+      "name": "Module renders panel: DRRM Ops (M3/M7)",
+      "pass": true,
+      "detail": "1604 chars"
+    },
+    {
+      "name": "Module renders panel: Kaligtasan at Komunidad (M4)",
+      "pass": true,
+      "detail": "515 chars"
+    },
+    {
+      "name": "Module renders panel: Agrikultura ng Barangay (M5)",
+      "pass": true,
+      "detail": "554 chars"
+    },
+    {
+      "name": "Module renders panel: Pagpaplano ng Barangay (M6)",
+      "pass": true,
+      "detail": "570 chars"
+    },
+    {
+      "name": "Module renders panel: Analytics ng Barangay (M10)",
+      "pass": false,
+      "detail": "449 chars, ERROR STATE"
+    },
+    {
+      "name": "Module renders panel: Transparency (M11)",
+      "pass": true,
+      "detail": "720 chars"
+    },
+    {
+      "name": "Module renders panel: Talaan ng Audit",
+      "pass": true,
+      "detail": "324 chars"
+    },
+    {
+      "name": "Dispatch: toast + Tanod tab shows Team Bravo dispatched to Purok 5",
+      "pass": true,
+      "detail": "toast=1"
+    },
+    {
+      "name": "Evac: occupancy edit 300→360 updates card (Halos puno)",
+      "pass": false,
+      "detail": ""
+    },
+    {
+      "name": "Evac: over-capacity clamps to 400/400 and shows PUNO warning",
+      "pass": false,
+      "detail": ""
+    },
+    {
+      "name": "Relief: inventory edit 450→420 packs shown",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Relief: distribution of 20 packs deducts stock (420→400)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Reports: walk-in report added as Pending (counts update)",
+      "pass": true,
+      "detail": "Lahat (2) Pending (0) Resolved (2) → Lahat (3) Pending (1) Resolved (2)"
+    },
+    {
+      "name": "Reports: respond marks report Natugunan",
+      "pass": false,
+      "detail": ""
+    },
+    {
+      "name": "Reports: resolve updates counts (Pending 0, Resolved 3)",
+      "pass": true,
+      "detail": "Lahat (3) Pending (0) Resolved (3)"
+    },
+    {
+      "name": "Audit trail logs dispatch/occupancy/relief/distribution/report actions",
+      "pass": true,
+      "detail": "{\"dispatch\":true,\"occupancy\":true,\"relief\":true,\"distribution\":true,\"reportAdd\":true}"
+    },
+    {
+      "name": "/dashboard?role=lgu as barangay user does NOT show Municipal command center",
+      "pass": true,
+      "detail": "municipal=false barangay=true"
+    },
+    {
+      "name": "PATCH /api/auth/profile {role:lgu} does not elevate barangay session",
+      "pass": true,
+      "detail": "patch=403 role=barangay"
+    },
+    {
+      "name": "English toggle switches labels (Citizen Incident Reports, Log out)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Theme toggle switches to dark",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Dark + English persist across reload",
+      "pass": true,
+      "detail": "dark=true en=true"
+    },
+    {
+      "name": "Toggle back to Filipino + light",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "375px: no horizontal page overflow",
+      "pass": true,
+      "detail": "scrollWidth-innerWidth=0"
+    },
+    {
+      "name": "375px: Relief tab no horizontal overflow",
+      "pass": true,
+      "detail": "0"
+    },
+    {
+      "name": "Logout returns to /signin and clears onboarding + session",
+      "pass": true,
+      "detail": "url=http://localhost:3000/signin onboarding=null me=200 {\"session\":null}"
+    },
+    {
+      "name": "After logout, /dashboard redirects to /signin",
+      "pass": true,
+      "detail": "http://localhost:3000/signin"
+    }
+  ],
+  "fatal": "TimeoutError: locator.innerText: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('aside').first()\u001b[22m\n"
+}

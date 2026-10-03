@@ -1,4 +1,5 @@
 import EmbedCard from "@/components/chat/EmbedCard";
+import MarkdownText from "@/components/chat/MarkdownText";
 import type { IMessage } from "@/types";
 
 export interface IMessageBubbleProps {
@@ -30,9 +31,13 @@ export default function MessageBubble({ message }: IMessageBubbleProps) {
               : "rounded-bl-sm bg-teal text-white"
           }`}
         >
-          <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
-            {message.content}
-          </p>
+          {isUser ? (
+            <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">
+              {message.content}
+            </p>
+          ) : (
+            <MarkdownText text={message.content} />
+          )}
         </div>
         {message.embed ? <EmbedCard embed={message.embed} /> : null}
       </div>

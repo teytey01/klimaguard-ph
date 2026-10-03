@@ -1,6 +1,14 @@
 import { NextResponse } from "next/server";
 
-import { fetchOpenMeteoWeather, fetchPagasaWeather } from "@/lib/api";
+import {
+  buildTenDayWeather,
+  fetchOpenMeteoWeather,
+  fetchPagasaWeather,
+  getPagasaTenDayDays,
+  manilaToday,
+  mergeTenDay,
+  PAGASA_TENDAY_META,
+} from "@/lib/api";
 import type { ILocation, IWeatherData } from "@/types";
 
 // Open-Meteo Forecast proxy with PAGASA attempted first then silent fallback.
@@ -43,9 +51,32 @@ export async function GET(
     // PAGASA first (only when a key is set and the call succeeds), otherwise
     // silently fall back to the Open-Meteo baseline provider.
     const pagasa = await fetchPagasaWeather(location);
-    const data = pagasa ?? (await fetchOpenMeteoWeather(location));
+    let data: IWeatherData;
+    try {
+      data = pagasa ?? (await fetchOpenMeteoWeather(location));
+    } catch (err) {
+      // Open-Meteo down / rate-limited → serve the PAGASA TenDay issuance on
+      // its own when it covers this location; otherwise surface the error.
+      const tenDayOnly = buildTenDayWeather(location);
+      if (tenDayOnly) {
+        return NextResponse.json(tenDayOnly);
+      }
+      throw err;
+    }
 
-    return NextResponse.json(data);
+    // Prefer the PAGASA TenDay issuance for the daily forecast when it covers
+    // this location and is still valid; Open-Meteo fills any remaining days
+    // (and keeps the true rain probability). Outside coverage → Open-Meteo only.
+    const tenDay = getPagasaTenDayDays(location);
+    if (tenDay.length > 0) {
+      return NextResponse.json({
+        ...data,
+        forecast: mergeTenDay(data.forecast, tenDay, 10),
+        pagasaTenDay: PAGASA_TENDAY_META,
+      });
+    }
+
+    return NextResponse.json({ ...data, forecast: data.forecast.filter((d) => d.date >= manilaToday()) });
   } catch {
     return NextResponse.json({ error: WEATHER_ERROR }, { status: 503 });
   }

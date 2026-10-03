@@ -1,31 +1,26 @@
 import { NextResponse } from "next/server";
 
-import {
-  DEFAULT_TRANSPARENCY_PROVINCE,
-  getTransparencyData,
-  TRANSPARENCY_ERROR,
-} from "@/lib/transparency";
-import type { ITransparencyData } from "@/types";
+import { getLocalProjects, LOCAL_PROJECTS_ERROR } from "@/lib/transparency";
+import type { ILocalProjectsResponse } from "@/types";
 
-// DRRM (Disaster Risk Reduction and Management) fund transparency for M11.
-// No live COA/DBM/DILG feed is wired yet, so this serves typed demo data for
-// the requested province (defaults to Leyte). 15-minute minimum cache.
-// Degrades gracefully to a Filipino error on failure. Factual figures only —
-// no political commentary (G03).
+// M11 per-project transparency for the locality (Calamba, Laguna). Serves
+// typed DEMO data — no live LGU/COA feed is wired yet. Optional filters:
+// ?barangay=Real&status=ongoing. Factual figures only (G03). 15-min cache.
 export const revalidate = 900;
 
 export async function GET(
   request: Request,
-): Promise<NextResponse<ITransparencyData> | NextResponse<{ error: string }>> {
+): Promise<NextResponse<ILocalProjectsResponse> | NextResponse<{ error: string }>> {
   try {
     const params = new URL(request.url).searchParams;
-    const province =
-      params.get("province")?.trim() || DEFAULT_TRANSPARENCY_PROVINCE;
-
-    const data = getTransparencyData(province);
-
-    return NextResponse.json(data);
+    const data = getLocalProjects({
+      barangay: params.get("barangay"),
+      status: params.get("status"),
+    });
+    return NextResponse.json(data, {
+      headers: { "Cache-Control": "public, max-age=900, stale-while-revalidate=300" },
+    });
   } catch {
-    return NextResponse.json({ error: TRANSPARENCY_ERROR }, { status: 503 });
+    return NextResponse.json({ error: LOCAL_PROJECTS_ERROR }, { status: 503 });
   }
 }

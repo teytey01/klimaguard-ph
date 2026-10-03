@@ -1,0 +1,23 @@
+{
+  "id": "FEAT-002",
+  "type": "fix",
+  "description": "Issue 2 — stop the emergency messages from overlapping. Root cause: the global AlertBanner (root layout, sticky top-0 z-50) and the municipal MunicipalOverrideBar (relative z-50) both render at the top during an active emergency on /dashboard, stacking two red strips. Also harden both strips and the MunEmergencyPanel header so lines/buttons never overlap down to 375px. Independent of the other FEATs except that it edits AlertBanner.tsx, which FEAT-003 also edits for i18n — FEAT-002 runs first, FEAT-003 rebases onto its changes.",
+  "status": "completed",
+  "steps": [
+    "In src/components/alerts/AlertBanner.tsx, import `usePathname` from 'next/navigation' and return null when the pathname starts with '/dashboard' (the dashboard shells own their own emergency UI via MunicipalOverrideBar). Keep all other behavior.",
+    "In src/components/alerts/AlertBanner.tsx, ensure the headline/affected-area/timestamp text block has `min-w-0 break-words` so long typhoon names wrap, and the Call-911/Isara button group uses `flex-wrap` so the buttons wrap under the text at 375px. Keep bg-[#E53E3E]/Alert Red and 44px targets.",
+    "In src/components/dashboard/MunicipalOverrideBar.tsx, change the inner row to stack on mobile: `flex-col gap-2 sm:flex-row sm:items-center sm:justify-between`; add `min-w-0 break-words leading-snug` to the override text span so the long mun.override line sits above the 911 button on narrow screens. Keep bg-alert and the 44px 911 target.",
+    "In src/components/dashboard/MunEmergencyPanel.tsx header, add `gap-y-1` to the flex-wrap header and `min-w-0 break-words` to the signal/wind <p> so the heading and signal line never collide at 375px. Do not change the data or actions."
+  ],
+  "acceptance_criteria": [
+    "`npm run lint ; npm run build` both exit 0 with no new errors.",
+    "On /dashboard as an lgu official with emergency active, only ONE red strip renders (the override bar) — the global AlertBanner does not also appear.",
+    "At 375px: the override line and the 911 button stack cleanly without overlap; on / the hazard banner's signal headline, affected-area line, timestamp and buttons never overlap.",
+    "Alert Red styling is preserved on all emergency surfaces."
+  ],
+  "verification": [
+    "Run `npm run lint ; npm run build` (PowerShell) and confirm both exit 0."
+  ],
+  "blocked_reason": null,
+  "findings": "All 4 steps done. AlertBanner.tsx: added usePathname from next/navigation; returns null when pathname startsWith '/dashboard' so the dashboard's own MunicipalOverrideBar is the only red strip there. Added break-words to the text block (already had min-w-0) and flex-wrap to the Call-911/Isara button group; bg-[#E53E3E], 44px targets and non-permanent dismissal all preserved. MunicipalOverrideBar.tsx: inner row now flex-col gap-2 sm:flex-row sm:items-center sm:justify-between (replacing flex-wrap); added break-words leading-snug to the override text span; bg-alert and 44px 911 target kept. MunEmergencyPanel.tsx header: added gap-y-1 and min-w-0 break-words on the signal/wind <p>. AlertBanner structure left clean for FEAT-003 i18n rebase (strings still hardcoded Filipino as before — not in scope here). Verified: `npm run lint ; npm run build` both exit 0, no new errors. Hooks fired on each save (emergency-priority, Filipino-text, README) — all are advisory and out of FEAT-002 scope; no behavioral changes made for them. Note: AlertBanner retains its hardcoded Filipino strings (Signal No., Apektadong lugar, Tawagan ang 911, Isara, aria-label 'Isara ang alerto') which FEAT-003 will migrate to i18n. No commits created per instructions."
+}

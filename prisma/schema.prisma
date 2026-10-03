@@ -1,0 +1,126 @@
+// KlimaGuard PH — role-scoped data model (SQLite, demo-grade).
+// Mirrors the project documentation's account model, roles, and privacy rules:
+// residents are semi-anonymous (hashed mobile, no name), officials are fully
+// identified (name/email/position/department). All data is location-scoped;
+// cross-municipality access is blocked at the query layer in the route code.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Four roles across three account types (farmer is a resident profile add-on).
+enum Role {
+  resident
+  farmer
+  barangay
+  lgu
+}
+
+enum ReportStatus {
+  open
+  responded
+  resolved
+}
+
+enum BudgetCategory {
+  prevention
+  preparedness
+  response
+  recovery
+}
+
+/// A user account. Residents self-sign-up (hashed mobile + OTP); officials are
+/// pre-created with username/password. Location is barangay-level granularity.
+model User {
+  id           String   @id @default(cuid())
+  role         Role
+  // Resident/Farmer identity: one-way hashed mobile (never store raw).
+  mobileHash   String?  @unique
+  // Display-only masked copy, e.g. "+63 917 ••• 4567". Not reversible.
+  mobileMasked String?
+  // Residents finish the 4-step onboarding once; officials are pre-onboarded.
+  onboarded    Boolean  @default(false)
+  // Officials: pre-registered identity (residents keep these null).
+  username     String?  @unique
+  passwordHash String?
+  name         String?
+  email        String?
+  position     String?
+  department   String?
+  // Farmer profile add-on.
+  isFarmer     Boolean  @default(false)
+  primaryCrop  String?
+  // Location (cascading). Officials: municipal scope (no barangay for lgu).
+  region       String
+  province     String
+  municipality String
+  barangay     String?
+  createdAt    DateTime @default(now())
+
+  sessions         Session[]
+  reports          CommunityReport[] @relation("ReportAuthor")
+  respondedReports CommunityReport[] @relation("ReportResponder")
+}
+
+/// Server session (cookie token hash → user). Demo-grade; expires via expiresAt.
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+}
+
+/// A community report tied to a barangay (M11). Residents/farmers submit;
+/// officials in the same barangay/municipality read and respond. Anonymous for
+/// residents — authorId is kept for scoping but never exposed to other users.
+model CommunityReport {
+  id           String       @id @default(cuid())
+  title        String
+  body         String
+  status       ReportStatus @default(open)
+  // Location scope.
+  region       String
+  province     String
+  municipality String
+  barangay     String
+  // Author (scoping only; not shown to others for resident anonymity).
+  authorId     String?
+  author       User?        @relation("ReportAuthor", fields: [authorId], references: [id])
+  // Official response.
+  response     String?
+  responderId  String?
+  responder    User?        @relation("ReportResponder", fields: [responderId], references: [id])
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+/// DRRM transparency budget per municipality (M11, view-only for residents).
+model MunicipalBudget {
+  id             String       @id @default(cuid())
+  province       String
+  municipality   String
+  fiscalYear     Int
+  totalAllocated Int
+  totalSpent     Int
+  source         String
+  lines          BudgetLine[]
+
+  @@unique([province, municipality, fiscalYear])
+}
+
+model BudgetLine {
+  id        String         @id @default(cuid())
+  budgetId  String
+  budget    MunicipalBudget @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  category  BudgetCategory
+  label     String
+  allocated Int
+  spent     Int
+}

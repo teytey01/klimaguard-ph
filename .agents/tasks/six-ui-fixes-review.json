@@ -1,0 +1,11 @@
+{
+  "verdict": "APPROVED",
+  "findings": [
+    {
+      "severity": "minor",
+      "file": "src/components/transparency/ProjectTracker.tsx",
+      "detail": "Out-of-scope hardcoded Filipino strings remain and do not switch to English: the 'Subukan ulit' retry button, the 'Barangay'/'Kalagayan' field labels, and the 'Proyekto'/'Nailabas' stat labels. These were explicitly declared outside the FEAT-003 boundary (confirmed in FEAT-003.json), so they are an accepted trade-off rather than a regression, but Issue 3 ('texts not translated when English is selected') is not 100% complete for this component. The same 'Subukan ulit' is also hardcoded in WeatherPanel.tsx's error state."
+    }
+  ],
+  "summary": "All six UI fixes are correctly implemented and `npm run lint ; npm run build` are green (exit 0, no errors/warnings): global theme-aware scrollbars and reduced-motion-safe page transitions via globals.css + a server-component template.tsx (issues 1 & 5); AlertBanner suppressed on /dashboard plus small-screen wrapping to end emergency-banner overlap at 375px (issue 2); hardcoded Filipino routed through i18n in AlertBanner/WeatherCard/WeatherPanel/ProjectTracker with full fil/en key parity (issue 3); municipal Overview restructured with a native-details MunCollapsibleSection preserving all panels/data (issue 4); and a role-gated official Dashboard link in AppHeader (issue 6). Conventions hold (functional components, exported I-prefixed props, Tailwind-only, no any, no console.log, Filipino default). One minor, pre-declared-out-of-scope gap: a few ProjectTracker/WeatherPanel strings stay hardcoded Filipino and do not switch to English."
+}

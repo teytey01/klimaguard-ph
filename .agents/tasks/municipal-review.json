@@ -1,0 +1,15 @@
+{
+  "verdict": "APPROVED",
+  "findings": [
+    "[non-blocking, confirmed] San Roque DANA and crop-damage figures don't match the barangay dashboard. Municipal: DANA submitted, 520 families, 18 houses, ₱1.85M agri damage, and the SitRep says 'DANA naipadala'. Barangay: DANA not submitted, 260 families, 0 houses, ₱185,000. Align the San Roque seed with barangayData.ts and rebalance another barangay so the total stays 1,420.",
+    "[non-blocking, confirmed] M11 budget is add-only. upsertBudgetLine is always called without an id, so an uploaded line's item, office or amount can't be edited. Add a per-row edit.",
+    "[non-blocking, confirmed] importBudgetCsv and setLccapProgress are bound in useMunicipalStore but no UI calls them. Wire a CSV textarea in M11 and an LCCAP progress input in M6, or remove both.",
+    "[non-blocking, confirmed] Alert red (MUN_BTN_ALERT or solid red chips) is used on non-emergency controls, including Settings Log out, Reset, returned-DANA chips and deadline chips. Steering reserves #E53E3E for emergencies. Use neutral or outline styles there.",
+    "[non-blocking, likely] Small text-teal (#38B2AC) on white or cmd-tile is about 2.5:1, below WCAG AA in light mode. This affects outline button labels and MunFeedback success lines. Use a darker teal for text.",
+    "[non-blocking, confirmed, deliberate] Santa Cruz is hard-coded and session.location.municipality is ignored. The seeded lgu user is mdrrmo.calamba, so it sees a Santa Cruz command center. At least show the session municipality, or reseed a Santa Cruz lgu user later.",
+    "[non-blocking, confirmed] Broadcasts reach the 5 seeded BDRRMCs plus PDRRMC (6 recipients), but the SitRep text says '26 brgy'. Make the copy match, e.g. featured / '5 sa 26'.",
+    "[non-blocking, confirmed] In M5 and M10, a useMunicipalWeather failure shows text only, with no retry button and no skeleton. Wire weather.retry and add a skeleton.",
+    "[non-blocking, confirmed] printMode never resets because the planned afterprint listener is missing, so a later Ctrl+P re-prints the last DANA/TOC sheet. Add the afterprint reset."
+  ],
+  "reviewDoc": "c:\\Users\\Althea Kim Peria\\Desktop\\KlimaGuardPH/.agents/tasks/municipal-review.md"
+}

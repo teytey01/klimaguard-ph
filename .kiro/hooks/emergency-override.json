@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Emergency Override Check",
+      "trigger": "PostFileSave",
+      "description": "Ensures emergency alert components always take visual priority (enforces safety guardrail at code level).",
+      "matcher": "src[\\\\/](components[\\\\/]alerts[\\\\/].*\\.tsx|app[\\\\/].*page\\.tsx)$",
+      "action": {
+        "type": "agent",
+        "prompt": "An alert component or page layout was just saved. Verify emergency alerts always take visual priority:\n\n1. Verify AlertBanner renders at the TOP of the page layout (z-50 or higher).\n2. Verify AlertBanner cannot be permanently dismissed — only temporarily hidden.\n3. Verify the emergency state overrides normal chat flow.\n4. Verify a \"Tawagan ang 911\" button is always visible with a minimum 44x44px touch target.\n5. Verify alert colors use #E53E3E — never muted or subtle.\n\nReport which checks passed and which failed. For each failure, name the file and line and describe the fix needed."
+      }
+    }
+  ]
+}
