@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# git worktrees (local-only; branches live in the repo, checkouts do not)
+/.worktrees/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
