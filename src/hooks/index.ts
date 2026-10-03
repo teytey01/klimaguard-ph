@@ -1,2 +1,2 @@
 // custom hooks
-export {};
+export * from "./useAlerts";
