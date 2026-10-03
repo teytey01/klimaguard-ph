@@ -1,0 +1,7 @@
+{
+  "task_id": "task-m3-m4-alerts",
+  "task_description": "Implement M3 Hazard Alerts + M4 Safety Advisor for KlimaGuard PH: a typed mock alerts API route (15-min revalidate), an offline-first useAlerts hook, an always-mounted full-width Alert Red AlertBanner with dismiss/reappear-on-worsening and a 911 button, an EvacuationCard, and a Filipino-first /alerts detail page with always-accessible hotlines. Next.js 16 App Router, React 19, TS strict, Tailwind v4.",
+  "status": "pending",
+  "feature_order": ["FEAT-001", "FEAT-002"],
+  "blocked_reason": null
+}

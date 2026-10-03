@@ -1,0 +1,28 @@
+{
+  "project_type": "Next.js 16 App Router web app (KlimaGuard PH) — Filipino-first conversational climate assistant. React 19 client/server components.",
+  "language": "TypeScript 5 (strict mode)",
+  "build_system": "npm + Next.js 16.3.8 build (Turbopack). Windows/PowerShell (command separator is ';'). The worktree at c:\\Users\\Althea Kim Peria\\Desktop\\KlimaGuardPH\\.worktrees\\m3-m4-alerts SHARES node_modules with the repo root. Step agents' cwd is the repo root c:\\Users\\Althea Kim Peria\\Desktop\\KlimaGuardPH, so ALWAYS cd into the worktree or use absolute worktree paths — relative paths land in the parent repo.",
+  "test_framework": "None configured. No test runner, no `test` script in package.json. Do NOT invent one; verification is build + lint.",
+  "build_command": "npm run build  (run from the worktree root)",
+  "test_command": "npm run lint  (ESLint 9 + eslint-config-next). There are no unit tests.",
+  "verification_instructions": "From c:\\Users\\Althea Kim Peria\\Desktop\\KlimaGuardPH\\.worktrees\\m3-m4-alerts run `npm run lint` then `npm run build`; both must succeed with no errors. For the API route, optionally `npm run dev` and GET http://localhost:3000/api/alerts to confirm JSON matches IAlertState. Do NOT run `npm run dev` as a blocking background task in tooling.",
+  "snapshot_or_generated_files": "null (no generated/snapshot files are checked in). Next writes .next/ types during build; do not commit .next.",
+  "environment_constraints": "No .env.local in the worktree and no PAGASA_API_KEY — code MUST NOT depend on env vars; the alerts route returns a self-contained mock. Alert Red #E53E3E is reserved EXCLUSIVELY for emergencies. Do NOT remove/alter the managed <!-- BEGIN:nextjs-agent-rules --> block in AGENTS.md. Shared files (src/app/layout.tsx, src/types/index.ts, barrels) are also edited by a concurrent M2+M8 branch and merged later — keep ALL edits to shared files minimal and ADDITIVE. Do NOT edit src/app/globals.css (its theme block is owned by another branch).",
+  "contribution_requirements": "Functional components only, one per file, props interface defined AND exported in the SAME file. No `any` (use I-prefixed interfaces). No inline styles (Tailwind v4 utility classes only). No console.log. All user-facing text Filipino. Loading = skeleton (not spinner). Error = Filipino message + retry button. Empty = helpful Filipino suggestion. Update barrels and import via the @/ alias. Mobile-first, 375px min width. Commit after the feature with message format `cycle-3: <desc>`; commit locally on branch feat/m3-m4-alerts, never push.",
+  "key_patterns": "Next.js 16, Cache Components OFF (no cacheComponents flag in next.config.ts) => use the previous caching model: route handlers set `export const revalidate = 900` (static literal, NOT 15*60) for 15-min cache; GET defaults to dynamic otherwise. Route handler = named `export async function GET()` returning Response.json(...). `RouteContext`/`LayoutProps<\"/\">` are GLOBAL generated types (no import). Root layout uses LayoutProps<\"/\">, Geist fonts, html className with font vars + h-full antialiased, body className 'min-h-full flex flex-col'. Dark mode: globals.css currently uses @media (prefers-color-scheme: dark) with NO .dark class/@custom-variant; use Tailwind default `dark:` variants on NON-emergency surfaces only. Emergency styling (banner + hotline buttons) stays theme-constant: bg-[#E53E3E] text-white in BOTH themes. Dates via date-fns v4 (installed).",
+  "relevant_files": [
+    "src/types/index.ts (placeholder `export {}` — add I-prefixed interfaces)",
+    "src/app/api/alerts/route.ts (CREATE — placeholder index.ts exists alongside, leave it)",
+    "src/hooks/useAlerts.ts (CREATE)",
+    "src/hooks/index.ts (placeholder `export {}` — add barrel export)",
+    "src/components/alerts/AlertBanner.tsx (CREATE)",
+    "src/components/alerts/EvacuationCard.tsx (CREATE)",
+    "src/components/alerts/index.ts (placeholder `export {}` — add barrel exports)",
+    "src/app/layout.tsx (MODIFY — mount <AlertBanner/> as first child in <body>, minimal additive)",
+    "src/app/alerts/page.tsx (CREATE — placeholder index.ts exists alongside, leave it)",
+    "src/app/page.tsx (scaffold home; do not touch unless needed)",
+    "node_modules/next/dist/docs/01-app/02-guides/caching-without-cache-components.md (caching reference)",
+    "node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/route.md (route handler reference)"
+  ],
+  "directory_structure": "src/app (App Router: layout.tsx, page.tsx, alerts/, api/<domain>/index.ts placeholders), src/components/<domain>/index.ts barrels, src/hooks/index.ts barrel, src/lib/{api,constants,utils}, src/types/index.ts. @/* aliases to src/*. Each domain folder has an index.ts barrel; real API handlers must be route.ts (not index.ts) and real pages must be page.tsx."
+}
