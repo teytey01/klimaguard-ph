@@ -1,0 +1,2 @@
+// alerts route placeholder
+export {};
