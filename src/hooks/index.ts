@@ -4,3 +4,5 @@ export type { IUseLocationResult } from "@/hooks/useLocation";
 
 export { useWeather } from "@/hooks/useWeather";
 export type { IUseWeatherResult } from "@/hooks/useWeather";
+
+export * from "./useAlerts";

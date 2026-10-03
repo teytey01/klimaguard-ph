@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
+import { AlertBanner } from "@/components/alerts";
 import { ThemeProvider } from "@/components/common";
 import "./globals.css";
 
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: NO_FLASH_THEME_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col">
+        <AlertBanner />
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
