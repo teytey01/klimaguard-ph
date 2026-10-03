@@ -24,6 +24,30 @@ function utilization(spent: number, allocated: number): number {
   return Math.max(0, Math.min(100, pct));
 }
 
+/**
+ * Map a 0–100 percentage to a static Tailwind width class.
+ *
+ * Dynamic classes like `w-[${pct}%]` are interpolated at runtime, so Tailwind
+ * v4's static scanner never emits the matching CSS and the bar renders with no
+ * width. Snapping to the nearest 5% keeps every class string a literal the
+ * scanner can see while staying within the "utility classes only" rule (no
+ * inline `style`). The full set is listed below so the scanner picks them up.
+ *
+ * w-0 w-[5%] w-[10%] w-[15%] w-[20%] w-[25%] w-[30%] w-[35%] w-[40%] w-[45%]
+ * w-[50%] w-[55%] w-[60%] w-[65%] w-[70%] w-[75%] w-[80%] w-[85%] w-[90%]
+ * w-[95%] w-full
+ */
+function widthClass(pct: number): string {
+  const snapped = Math.round(pct / 5) * 5;
+  if (snapped <= 0) {
+    return "w-0";
+  }
+  if (snapped >= 100) {
+    return "w-full";
+  }
+  return `w-[${snapped}%]`;
+}
+
 export default function BudgetTracker({
   data,
   context = "resident",
@@ -85,7 +109,7 @@ export default function BudgetTracker({
               </div>
               <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-surface-2">
                 <div
-                  className={`h-full rounded-full bg-teal w-[${pct}%]`}
+                  className={`h-full rounded-full bg-teal ${widthClass(pct)}`}
                   role="progressbar"
                   aria-valuenow={pct}
                   aria-valuemin={0}
