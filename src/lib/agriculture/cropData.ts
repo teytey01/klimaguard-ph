@@ -74,6 +74,7 @@ export const DEMO_ENSO_PHASE: IEnsoPhase = "neutral";
 export const DEMO_ADVISORY_INPUT: IAdvisoryInput = {
   current: {
     temperatureC: 30,
+    feelsLikeC: 33,
     weatherCode: 2,
     humidity: 78,
     rainChance: 20,

@@ -103,6 +103,8 @@ export type IWeatherSource = "Open-Meteo" | "PAGASA";
 /** Current conditions for the selected location. */
 export interface ICurrentWeather {
   temperatureC: number;
+  /** Apparent ("feels like") temperature, °C. */
+  feelsLikeC: number;
   weatherCode: number;
   humidity: number;
   rainChance: number;
@@ -117,6 +119,51 @@ export interface IForecastDay {
   highC: number;
   lowC: number;
   rainChance: number;
+}
+
+/**
+ * One day of a PAGASA TenDay forecast, before normalization to `IForecastDay`.
+ * Mirrors the fields PAGASA's TenDay payload is expected to expose. Kept
+ * distinct from `IForecastDay` so the PAGASA-specific shape (and its
+ * attribution) is explicit at the wrapper boundary.
+ */
+export interface IPagasaForecast {
+  /** ISO date, yyyy-MM-dd. */
+  date: string;
+  /** Raw PAGASA sky-condition description (English), e.g. "Cloudy skies". */
+  description: string;
+  highC: number;
+  lowC: number;
+  /** Rainfall probability, % (0 when PAGASA omits it). */
+  rainChance: number;
+  /** Attribution — always "PAGASA" for this shape. */
+  source: Extract<IWeatherSource, "PAGASA">;
+}
+
+/**
+ * Flat current-conditions shape returned by `getCurrentWeather()` in
+ * `lib/api/weather.ts`. This is the compact, display-ready view (Filipino
+ * `condition` label already resolved) consumed directly by WeatherCard-style
+ * UI. It is intentionally distinct from the nested `IWeatherData` payload the
+ * /api/weather Route Handler returns.
+ */
+export interface IOpenMeteoCurrentWeather {
+  /** Rounded air temperature, °C. */
+  temperature: number;
+  /** Rounded apparent ("feels like") temperature, °C. */
+  feelsLike: number;
+  /** Filipino weather description incl. emoji, e.g. "Umuulan 🌧️". */
+  condition: string;
+  /** Relative humidity, %. */
+  humidity: number;
+  /** Precipitation probability, %. */
+  rainChance: number;
+  /** Wind speed, km/h. */
+  windSpeed: number;
+  /** ISO timestamp of when the data was fetched. */
+  lastUpdated: string;
+  /** Attribution — always "Open-Meteo" here. */
+  source: IWeatherSource;
 }
 
 /** Full weather payload returned by the /api/weather Route Handler. */
