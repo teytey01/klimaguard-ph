@@ -9,8 +9,13 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  // Vercel Postgres created these with a "DATABASE_URL" custom prefix, so the
+  // generated names are doubled up. `url` uses the pooled, Prisma-optimized
+  // connection (safe for serverless runtime); `directUrl` uses the direct
+  // Postgres connection for migrations / `prisma db push` (bypasses pgbouncer).
+  url       = env("DATABASE_URL_PRISMA_DATABASE_URL")
+  directUrl = env("DATABASE_URL_POSTGRES_URL")
 }
 
 // Four roles across three account types (farmer is a resident profile add-on).
